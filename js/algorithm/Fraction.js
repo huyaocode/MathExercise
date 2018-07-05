@@ -140,7 +140,3 @@ Fraction.prototype.appointment = function (fraction) {
     }
     return { d: d, m: m };
 }
-
-var f = new Fraction();
-
-console.log(f.transformFraction(3))

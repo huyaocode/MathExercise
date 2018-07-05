@@ -36,6 +36,7 @@ MathExercise.prototype.init = function() {
  * 生成问题
  */
 MathExercise.prototype.createProblem = function() {
+    console.log('op', this.maxOperateNum)
 
     var problem = [];   //问题数组
     var maxNumRange = this.maxNumRange;
@@ -43,6 +44,7 @@ MathExercise.prototype.createProblem = function() {
 
     var len = Math.ceil( Math.random() * this.maxOperateNum);
     var bracketLeft = false;    //左括号flag
+    var fractionOp = new Fraction();
 
     while(len > 0){
         len--;
@@ -53,14 +55,14 @@ MathExercise.prototype.createProblem = function() {
             }
         }
         let num;
-        if(Math.random() > 0.8){
+        if(Math.random() > 0.5){
             num = Math.ceil( Math.random() * maxNumRange);
         } else{
-            num = this.createFraction();
+            let f = fractionOp.createFractionNum();
+            num = f.d + '/' + f.m;
         }
         
         let op = this.arrOperators[ Math.floor(  Math.random() * operateNum ) ];
-        num = Math.ceil( Math.random() * maxNumRange);
         problem.push( num );
         if(bracketLeft){
             if( Math.random() > 0.3 && problem[problem.length-2] != '('){ //并且随机数大于0.7
@@ -77,8 +79,9 @@ MathExercise.prototype.createProblem = function() {
     if(bracketLeft){
         problem.push( ')' );
     }
-    if(problem.length == 4 &&  problem[0] == '('){
-        problem = problem.slice(1,3);   //去除多余括号
+    console.log(problem)
+    if(problem.length == 5 && problem[0] == '('){
+        problem = problem.slice(1,4);   //去除多余括号
     }
     return problem;
 };
@@ -116,19 +119,19 @@ MathExercise.prototype.getQuestions = function() {
     return this.oExercise;
 };
 
-/*
- * 判题
- */
-MathExercise.prototype.judgment = function(exp, ans) {
+// /*
+//  * 判题
+//  */
+// MathExercise.prototype.judgment = function(exp, ans) {
 
 
-};
+// };
 
-/*
- * 生成分数
- */
-MathExercise.prototype.createFraction = function() {
+// /*
+//  * 生成分数
+//  */
+// MathExercise.prototype.createFraction = function() {
 
 
-}
+// }
 
