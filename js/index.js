@@ -78,42 +78,58 @@ $('.next').on('click', nextQues);
 
 var quesIndex = -1;
 
-// var arrCorrect = [];
-// var arrWrong = [];
-
 function nextQues(){
-    if(quesIndex === -1) {
-        quesIndex ++
-        return 
-    }
-    var qus = arrQus[quesIndex].qus;
-    $('.problem').text( qus.problem.join(" ") + " = ?");
-    let {d,m} = qus.answer;
-    
-    // $('#inputAns').attr("value", '' + qus.answer.d + '/' + qus.answer.m);
-    let pAns = $('#inputAns').val()
-    let f = new Fraction()
-    $('#inputAns').val('')
-    let p = f.transformFraction(pAns)
-    let pD = p.d
-    let pM = p.m
-    pAns = pD/pM;
-    let tAns = d/m;
+    if(quesIndex < 0){
+        quesIndex++;
+        //生成题目
+        var qus = arrQus[quesIndex].qus;
+        $('.problem').text( qus.problem.join(" ") + " = ?");
 
-    qus.isCorrect = Math.abs(pAns - tAns) <= 0.001
-    if(quesIndex + 1 == arrQus.length){
+        return;
+    }
+    quesIndex++;
+    //计算用户输入的题目
+    let pAns = $('#inputAns').val() //获取用户输入
+    if(pAns){   //如果用户有输入
+        let f = new Fraction()
+        let p = f.transformFraction(pAns)
+        let pD = p.d
+        let pM = p.m
+        pAns = pD/pM;
+        $('#inputAns').val('')  //输入框置为空
+    }
+    //计算题的答案，算成小数
+    let d , m;
+    d = arrQus[quesIndex - 1].qus.answer.d;
+    m = arrQus[quesIndex - 1].qus.answer.m;
+    let tAns = d/m;
+    if(quesIndex == arrQus.length ){
         $('.wrapper').hide();
         $('.container').show(300)
+        arrQus[quesIndex - 1].qus.pAns = pAns;
+        arrQus[quesIndex - 1].qus.isCorrect = Math.abs(pAns - tAns) <= 0.001
         generateGrade();
         clearInterval(timer);
         return 
     }
+     //生成题目
+    var qus = arrQus[quesIndex].qus;
+    $('.problem').text( qus.problem.join(" ") + " = ?");
+    
+    
+    
+    //写入用户的输入和题是否正确
+    arrQus[quesIndex - 1].qus.pAns = pAns;
+    arrQus[quesIndex - 1].qus.isCorrect = Math.abs(pAns - tAns) <= 0.001
+    console.log(quesIndex)
+    
     time = 20
     $('#time').text('' + time)
-    quesIndex++;
+    
 }
 
 function generateGrade() {
+    console.log(arrQus)
     let html = ''
     for(let i=0;i<arrQus.length;i++) {
         var qus = arrQus[i].qus;
@@ -122,6 +138,7 @@ function generateGrade() {
                 <td>${i+1}</td>
                 <td>${qus.problem.join(" ") + " = ?"}</td>
                 <td>${qus.answer.d + (qus.answer.m !== 1 ? '/' + qus.answer.m : '')}</td>
+                <td>${qus.pAns}</td>
                 <td>${qus.isCorrect ? '正确':"错误"}</td>
             </tr>
         `
@@ -133,5 +150,5 @@ function generateGrade() {
             score ++
         }
     }
-    $('body').append(`<p class="text-center">分数:${score}</p>`)
+    $('body').append(`<p class="text-center">你对了:${score}</p>`)
 }

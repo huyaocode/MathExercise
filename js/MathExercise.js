@@ -1,4 +1,6 @@
-
+/**
+ * 题目生成类
+ */
 function MathExercise(){
 
     this.iProblemNum = 10;  //题目数量
@@ -17,12 +19,10 @@ MathExercise.prototype.init = function() {
     for(let i = 0; i < this.iProblemNum; i++){
         let problem, answer,repeatFlag
         do{
-            problem = this.createProblem();
-
-            answer = this.getAnswer(problem);
-            
-            repeatFlag = this.createRepeatFlag(answer, problem);
-        } while(this.oExercise[repeatFlag])    //判断是否已经有这个算式
+            problem = this.createProblem();//生成题目
+            answer = this.getAnswer(problem);//计算答案
+            repeatFlag = this.createRepeatFlag(answer, problem);//题目标识flag
+        } while(!this.isValidP(answer, repeatFlag))    //判断是否已经有这个算式
 
         this.oExercise[repeatFlag] = {
             id: i,
@@ -33,7 +33,7 @@ MathExercise.prototype.init = function() {
 };
 
 /**
- * 生成问题
+ * 生成表达式
  */
 MathExercise.prototype.createProblem = function() {
 
@@ -58,7 +58,16 @@ MathExercise.prototype.createProblem = function() {
             num = Math.ceil( Math.random() * maxNumRange);
         } else{
             let f = fractionOp.createFractionNum();
-            num = f.d + '/' + f.m;
+            //真分数处理
+            let pre = "";
+            if(f.d >= f.m) {
+                pre = Math.floor(f.d / f.m) ;
+                f.d = f.d - pre * f.m;
+                if(f.d){
+                    pre += "’";
+                }
+            }
+            num = f.d != 0 ? (pre + f.d + '/' + f.m) : pre;
         }
         
         let op = this.arrOperators[ Math.floor(  Math.random() * operateNum ) ];
@@ -78,7 +87,6 @@ MathExercise.prototype.createProblem = function() {
     if(bracketLeft){
         problem.push( ')' );
     }
-    console.log(problem)
     if(problem.length == 5 && problem[0] == '('){
         problem = problem.slice(1,4);   //去除多余括号
     }
@@ -118,19 +126,13 @@ MathExercise.prototype.getQuestions = function() {
     return this.oExercise;
 };
 
-// /*
-//  * 判题
-//  */
-// MathExercise.prototype.judgment = function(exp, ans) {
-
-
-// };
-
-// /*
-//  * 生成分数
-//  */
-// MathExercise.prototype.createFraction = function() {
-
-
-// }
-
+MathExercise.prototype.isValidP = function(ans, flag){
+    var isV = true;
+    if(ans.d * ans.m < 0){
+        isV = false;
+    }
+    if(this.oExercise[flag]){
+        isV = false; 
+    }
+    return isV;
+}
