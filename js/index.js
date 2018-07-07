@@ -1,8 +1,5 @@
 
 var exercise = new MathExercise();
-
-// var grade = $('.grade')[0];
-
 var arrQus = [];  //题目数量
 var language = $("#language option:selected").val();
 var time = 20; // 倒计时
@@ -121,7 +118,6 @@ function nextQues(){
     //写入用户的输入和题是否正确
     arrQus[quesIndex - 1].qus.pAns = pAns;
     arrQus[quesIndex - 1].qus.isCorrect = Math.abs(pAns - tAns) <= 0.001
-    console.log(quesIndex)
     
     time = 20
     $('#time').text('' + time)
