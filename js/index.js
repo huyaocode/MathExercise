@@ -5,7 +5,8 @@ var exercise = new MathExercise();
 
 var arrQus = [];  //题目数量
 var language = $("#language option:selected").val();
-
+var time = 20; // 倒计时
+var timer = null
 /**
  * 根据年级出题
  * @param {*} grade 
@@ -39,6 +40,14 @@ $('.start').on('click',function(){
         createQ(greade);
         $('.wrapper .welcome').css('display', 'none');
         nextQues();
+        timer = setInterval(() => {
+            time --;
+            $('#time').text(time)
+            if(time === 0) {
+                nextQues()
+                time = 20
+            }
+        },  1000)
     }
 })
 
@@ -92,19 +101,20 @@ function nextQues(){
     let tAns = d/m;
 
     qus.isCorrect = Math.abs(pAns - tAns) <= 0.001
-    console.log(pAns, tAns)
     if(quesIndex + 1 == arrQus.length){
         $('.wrapper').hide();
         $('.container').show(300)
         generateGrade();
+        clearInterval(timer);
         return 
     }
+    time = 20
+    $('#time').text('' + time)
     quesIndex++;
 }
 
 function generateGrade() {
     let html = ''
-    console.log(qus)
     for(let i=0;i<arrQus.length;i++) {
         var qus = arrQus[i].qus;
         html += `
@@ -117,4 +127,11 @@ function generateGrade() {
         `
     }
     $('#tbody').html(html)
+    let score = 0
+    for(let i=0;i<arrQus.length;i++) {
+        if(arrQus[i].qus.isCorrect) {
+            score ++
+        }
+    }
+    $('body').append(`<p class="text-center">分数:${score}</p>`)
 }
