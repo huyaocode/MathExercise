@@ -11,7 +11,6 @@ var language = $("#language option:selected").val();
  * @param {*} grade 
  */
 function createQ(grade){
-    console.log('grade',grade)
     var num = 6, range = 10, opnum = 1, arrop =['+', '-'];
     grade = +grade;
     num += grade * 4;
@@ -31,7 +30,6 @@ function createQ(grade){
     for(let i in oQ){
         arrQus.push({index: i, qus: oQ[i]});
     }
-    console.log(arrQus);
 }
 
 //程序开始
@@ -69,18 +67,54 @@ function changeLan(){
 
 $('.next').on('click', nextQues);
 
-var quesIndex = 0;
+var quesIndex = -1;
 
 // var arrCorrect = [];
 // var arrWrong = [];
 
 function nextQues(){
+    if(quesIndex === -1) {
+        quesIndex ++
+        return 
+    }
     var qus = arrQus[quesIndex].qus;
-    
     $('.problem').text( qus.problem.join(" ") + " = ?");
-    $('#inputAns').attr("value", '' + qus.answer.d + '/' + qus.answer.m);
+    let {d,m} = qus.answer;
+    
+    // $('#inputAns').attr("value", '' + qus.answer.d + '/' + qus.answer.m);
+    let pAns = $('#inputAns').val()
+    let f = new Fraction()
+    $('#inputAns').val('')
+    let p = f.transformFraction(pAns)
+    let pD = p.d
+    let pM = p.m
+    pAns = pD/pM;
+    let tAns = d/m;
+
+    qus.isCorrect = Math.abs(pAns - tAns) <= 0.001
+    console.log(pAns, tAns)
     if(quesIndex + 1 == arrQus.length){
-        alert('做完了')
+        $('.wrapper').hide();
+        $('.container').show(300)
+        generateGrade();
+        return 
     }
     quesIndex++;
+}
+
+function generateGrade() {
+    let html = ''
+    console.log(qus)
+    for(let i=0;i<arrQus.length;i++) {
+        var qus = arrQus[i].qus;
+        html += `
+            <tr>
+                <td>${i+1}</td>
+                <td>${qus.problem.join(" ") + " = ?"}</td>
+                <td>${qus.answer.d + (qus.answer.m !== 1 ? '/' + qus.answer.m : '')}</td>
+                <td>${qus.isCorrect ? '正确':"错误"}</td>
+            </tr>
+        `
+    }
+    $('#tbody').html(html)
 }
