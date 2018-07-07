@@ -36,7 +36,6 @@ MathExercise.prototype.init = function() {
  * 生成问题
  */
 MathExercise.prototype.createProblem = function() {
-    console.log('op', this.maxOperateNum)
 
     var problem = [];   //问题数组
     var maxNumRange = this.maxNumRange;
